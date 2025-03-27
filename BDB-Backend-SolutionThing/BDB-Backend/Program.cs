@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using BDB_Backend.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

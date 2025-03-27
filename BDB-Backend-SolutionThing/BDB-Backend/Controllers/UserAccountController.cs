@@ -1,3 +1,4 @@
+using BDB_Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BDB_Backend.Controllers

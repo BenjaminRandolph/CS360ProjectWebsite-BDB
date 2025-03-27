@@ -1,4 +1,4 @@
-namespace BDB_Backend
+namespace BDB_Backend.Models
 {
     public class UserAccount
     {

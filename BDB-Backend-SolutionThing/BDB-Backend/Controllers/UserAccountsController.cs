@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BDB_Backend.Models;
+using Microsoft.AspNetCore.Identity;
 
 // This handles most API requests to the server about User Accounts
 // so if the front end accesses https://<ip>:<port>/UserAccounts in different ways,
@@ -17,6 +18,8 @@ namespace BDB_Backend.Controllers
     public class UserAccountsController : ControllerBase
     {
         private readonly DatabaseContext _context;
+
+        private readonly PasswordHasher<UserAccount> thing = new PasswordHasher<UserAccount>();
 
         public UserAccountsController(DatabaseContext context)
         {
@@ -80,6 +83,7 @@ namespace BDB_Backend.Controllers
         [HttpPost]
         public async Task<ActionResult<UserAccount>> PostUserAccount(UserAccount userAccount)
         {
+            userAccount.userPassword = thing.HashPassword(userAccount, userAccount.userPassword);
             _context.userAccounts.Add(userAccount);
             await _context.SaveChangesAsync();
 

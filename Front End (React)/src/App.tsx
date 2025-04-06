@@ -2,6 +2,7 @@ import { LinkContainer } from 'react-router-bootstrap'
 import { Nav } from 'react-bootstrap';
 import { Routes, Route, Link } from 'react-router-dom'
 import Signup from './Signup'
+import Account from './Account'
 
 function App(){
 	return(
@@ -45,6 +46,7 @@ function App(){
         			  </div>
         			} />
         		<Route path="/signup" element={<Signup />} />
+				<Route path="/account" element={<Account />} />
       		</Routes>
 	  </div>
 	);

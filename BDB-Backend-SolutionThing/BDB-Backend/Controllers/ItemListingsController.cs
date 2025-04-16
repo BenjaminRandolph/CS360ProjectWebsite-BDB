@@ -27,14 +27,14 @@ namespace BDB_Backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ItemListing>>> GetItemListing()
         {
-            return await _context.ItemListing.ToListAsync();
+            return await _context.ItemListings.ToListAsync();
         }
 
         // GET: api/ItemListings/<any listing id>
         [HttpGet("{id}")]
         public async Task<ActionResult<ItemListing>> GetItemListing(int id)
         {
-            var itemListing = await _context.ItemListing.FindAsync(id);
+            var itemListing = await _context.ItemListings.FindAsync(id);
 
             if (itemListing == null)
             {
@@ -49,7 +49,7 @@ namespace BDB_Backend.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutItemListing(int id, ItemListing itemListing)
         {
-            if (id != itemListing.id)
+            if (id != itemListing.ListingID)
             {
                 return BadRequest();
             }
@@ -80,23 +80,23 @@ namespace BDB_Backend.Controllers
         [HttpPost]
         public async Task<ActionResult<ItemListing>> PostItemListing(ItemListing itemListing)
         {
-            _context.ItemListing.Add(itemListing);
+            _context.ItemListings.Add(itemListing);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetItemListing", new { id = itemListing.id }, itemListing);
+            return CreatedAtAction("GetItemListing", new { id = itemListing.ListingID }, itemListing);
         }
 
         // DELETE: api/ItemListings/<any listing id>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteItemListing(int id)
         {
-            var itemListing = await _context.ItemListing.FindAsync(id);
+            var itemListing = await _context.ItemListings.FindAsync(id);
             if (itemListing == null)
             {
                 return NotFound();
             }
 
-            _context.ItemListing.Remove(itemListing);
+            _context.ItemListings.Remove(itemListing);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -104,7 +104,7 @@ namespace BDB_Backend.Controllers
 
         private bool ItemListingExists(int id)
         {
-            return _context.ItemListing.Any(e => e.id == id);
+            return _context.ItemListings.Any(e => e.ListingID == id);
         }
     }
 }

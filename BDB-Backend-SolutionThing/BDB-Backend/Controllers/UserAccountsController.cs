@@ -19,7 +19,7 @@ namespace BDB_Backend.Controllers
     {
         private readonly DatabaseContext _context;
 
-        private readonly PasswordHasher<UserAccount> thing = new PasswordHasher<UserAccount>();
+        private readonly PasswordHasher<User> thing = new PasswordHasher<User>();
 
         public UserAccountsController(DatabaseContext context)
         {
@@ -28,16 +28,16 @@ namespace BDB_Backend.Controllers
 
         // GET: api/UserAccounts
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserAccount>>> GetuserAccounts()
+        public async Task<ActionResult<IEnumerable<User>>> GetuserAccounts()
         {
-            return await _context.userAccounts.ToListAsync();
+            return await _context.Users.ToListAsync();
         }
 
         // GET: api/UserAccounts/<any existing user id>
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserAccount>> GetUserAccount(int id)
+        public async Task<ActionResult<User>> GetUserAccount(int id)
         {
-            var userAccount = await _context.userAccounts.FindAsync(id);
+            var userAccount = await _context.Users.FindAsync(id);
 
             if (userAccount == null)
             {
@@ -50,9 +50,9 @@ namespace BDB_Backend.Controllers
         // PUT: api/UserAccounts/<any user id>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUserAccount(int id, UserAccount userAccount)
+        public async Task<IActionResult> PutUserAccount(int id, User userAccount)
         {
-            if (id != userAccount.id)
+            if (id != userAccount.UserID)
             {
                 return BadRequest();
             }
@@ -81,26 +81,26 @@ namespace BDB_Backend.Controllers
         // POST: api/UserAccounts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<UserAccount>> PostUserAccount(UserAccount userAccount)
+        public async Task<ActionResult<User>> PostUserAccount(User userAccount)
         {
-            userAccount.userPassword = thing.HashPassword(userAccount, userAccount.userPassword);
-            _context.userAccounts.Add(userAccount);
+            userAccount.Password = thing.HashPassword(userAccount, userAccount.Password);
+            _context.Users.Add(userAccount);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUserAccount", new { id = userAccount.id }, userAccount);
+            return CreatedAtAction("GetUserAccount", new { id = userAccount.UserID }, userAccount);
         }
 
         // DELETE: api/UserAccounts/<any existing user id>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUserAccount(int id)
         {
-            var userAccount = await _context.userAccounts.FindAsync(id);
+            var userAccount = await _context.Users.FindAsync(id);
             if (userAccount == null)
             {
                 return NotFound();
             }
 
-            _context.userAccounts.Remove(userAccount);
+            _context.Users.Remove(userAccount);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -108,7 +108,7 @@ namespace BDB_Backend.Controllers
 
         private bool UserAccountExists(int id)
         {
-            return _context.userAccounts.Any(e => e.id == id);
+            return _context.Users.Any(e => e.UserID == id);
         }
     }
 }

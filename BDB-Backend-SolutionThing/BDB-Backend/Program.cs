@@ -1,12 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using BDB_Backend.Models;
+using System.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<DatabaseContext>(opt => opt.UseInMemoryDatabase("DatabaseConnection"));
+//System.Configuration.ConfigurationManager.ConnectionStrings["PostgreSQLConnection"].ConnectionString)
+builder.Services.AddDbContext<DatabaseContext>(options => options.UseNpgsql("Host=localhost:6000;Database=ECommerceBDB;Username=postgres;Password=P@ssw0rd!"));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -1,30 +1,79 @@
+import { useNavigate } from 'react-router-dom'
+import React, { useState } from 'react';
+
 function Signup(){
+	const [formData, setFormData] = useState({
+		userName: '',
+		password: '',
+		email: '',
+		phoneNumber: '',
+		address: '',
+	});
+
+	const [error] = useState('');
+
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.target;
+		setFormData(prev => ({
+		  ...prev,
+		  [name]: value,
+		}));
+	};
+
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+
+		if (
+		  !formData.userName ||
+		  !formData.password ||
+		  !formData.email ||
+		  !formData.phoneNumber ||
+		  !formData.address
+		) {
+		  return;
+		}
+	
+		try {
+		  const response = await fetch('https://localhost:7207/api/UserAccounts', {
+			method: 'POST',
+			headers: {
+			  'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+			  ...formData
+			}),
+		  });
+	
+		  if (response.ok) {
+			setFormData({
+			  userName: '',
+			  password: '',
+			  email: '',
+			  phoneNumber: '',
+			  address: '',
+			});
+			useNavigate()('/');
+		  } else {
+			const errText = await response.text();
+		  }
+		} catch (err) {
+		}
+	  };
+
 	return(
 		<div className="position-absolute top-50 start-50 translate-middle">
 				<h1>Signup</h1>
 				<p></p>
-		        <form>
-		        	<div className="mb-3">
-		            	<label className="form-label">Username</label>
-		                <input type="text" className="form-control" />
-		            </div>
-		            <div className="mb-3">
-		            	<label className="form-label">Email</label>
-		                <input type="text" className="form-control" />
-		            </div>
+		        <form onSubmit={handleSubmit}>
+				{['userName', 'password', 'email', 'phoneNumber', 'address'].map((field) => (
+		        	<>
 					<div className="mb-3">
-		            	<label className="form-label">Phone Number</label>
-		                <input type="text" className="form-control" />
-		            </div>
-					<div className="mb-3">
-		            	<label className="form-label">Address</label>
-		                <input type="text" className="form-control" />
-		            </div>
-					<div className="mb-3">
-		            	<label className="form-label">Password</label>
-		                <input type="text" className="form-control" />
-		            </div>
-		            	<button type="submit" className="btn btn-primary">Submit</button>
+							<label className="form-label">{field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</label>
+							<input type='text' className="form-control" name={field} value={(formData as any)[field]} onChange={handleChange} />
+          			</div>
+					</>
+				))}
+		            <button type="submit" className="btn btn-primary">Submit</button>
 		        </form>
 		</div>
 	);

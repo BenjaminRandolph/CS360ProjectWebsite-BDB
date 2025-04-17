@@ -1,6 +1,6 @@
 import { LinkContainer } from 'react-router-bootstrap'
 import { Nav } from 'react-bootstrap';
-import { Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route, Link, useNavigate } from 'react-router-dom'
 import Signup from './Signup'
 import Account from './Account'
 import Listings from './Listings'
@@ -12,16 +12,37 @@ import React, { useEffect, useState } from 'react';
 function App(){
 	const [users, setUsers] = useState<any>(null);
 
-  	useEffect(() => {
-    	fetch('http://localhost:6000/users')
-      	.then(res => res.json())
-    	.then(data => setUsers(data));
-  	}, []);
+	const [username, setUsername] = useState('');
+	const [userpass, setUserpass] = useState('');
 
+
+	useEffect(() => {
+		fetch('https://localhost:7207/api/UserAccounts')
+		  .then(res => {
+			if (!res.ok) {
+			  throw new Error(`HTTP error! Status: ${res.status}`);
+			}
+			return res.json();
+		  })
+		  .then(data => setUsers(data))
+		  .catch(error => {
+			console.error('Error fetching users:', error);
+		  });
+	}, []);
+	  
+	const handleSubmit = (e: React.FormEvent) => {
+    	e.preventDefault();
+
+    	const matchedUser = users.find((user: { userName: string; password: string; }) => user.userName === username && user.password === userpass);
+
+    	if (matchedUser) {
+      		useNavigate()('/home');
+   		}
+  	};
+	
 	return(
 		<div>
-      		<h1>Users API Test</h1>
-      		<pre>{JSON.stringify(users, null, 2)}</pre>
+      		{/* <pre>{users[0].userName}</pre> */}
 			
     		<nav className="navbar navbar-expand-lg bg-body-tertiary position-absolute top-0 start-0">
 				<div className="container-fluid">
@@ -73,14 +94,14 @@ function App(){
         			<div className="position-absolute top-50 start-50 translate-middle">
 						<h1>Login</h1>
 						<p></p>
-        			    <form>
+        			    <form onSubmit={handleSubmit}>
         			      <div className="mb-3">
         			        <label className="form-label">Username</label>
-        			        <input type="text" className="form-control" />
+        			        <input type="text" className="form-control" value={username} onChange={(e) => setUsername(e.target.value)}/>
         			      </div>
         			      <div className="mb-3">
         			        <label className="form-label">Password</label>
-        			        <input type="text" className="form-control" />
+        			        <input type="text" className="form-control" value={userpass} onChange={(e) => setUserpass(e.target.value)}/>
         			      </div>
         			      <button type="submit" className="btn btn-primary">Submit</button>
         			    </form>

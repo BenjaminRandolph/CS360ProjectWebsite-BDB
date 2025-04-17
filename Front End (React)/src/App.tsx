@@ -15,6 +15,7 @@ function App(){
 	const [username, setUsername] = useState('');
 	const [userpass, setUserpass] = useState('');
 
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		fetch('https://localhost:7207/api/UserAccounts')
@@ -33,11 +34,15 @@ function App(){
 	const handleSubmit = (e: React.FormEvent) => {
     	e.preventDefault();
 
-    	const matchedUser = users.find((user: { userName: string; password: string; }) => user.userName === username && user.password === userpass);
-
-    	if (matchedUser) {
-      		useNavigate()('/home');
-   		}
+    	fetch('https://localhost:7207/api/UserAccounts/LoginUser/' + username + '/' + userpass)
+			.then(res => {
+				if (res.ok) {
+					navigate('/home');
+				}
+			})
+			.catch(error => {
+				console.error('Login error', error);
+			});
   	};
 	
 	return(

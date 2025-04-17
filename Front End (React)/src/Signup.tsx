@@ -12,6 +12,8 @@ function Signup(){
 
 	const [error] = useState('');
 
+	const navigate = useNavigate();
+
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
 		setFormData(prev => ({
@@ -52,7 +54,7 @@ function Signup(){
 			  phoneNumber: '',
 			  address: '',
 			});
-			useNavigate()('/');
+			navigate('/');
 		  } else {
 			const errText = await response.text();
 		  }
@@ -67,7 +69,7 @@ function Signup(){
 		        <form onSubmit={handleSubmit}>
 				{['userName', 'password', 'email', 'phoneNumber', 'address'].map((field) => (
 		        	<>
-					<div className="mb-3">
+					<div className="mb-3" key={field}>
 							<label className="form-label">{field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</label>
 							<input type='text' className="form-control" name={field} value={(formData as any)[field]} onChange={handleChange} />
           			</div>

@@ -19,7 +19,7 @@ namespace BDB_Backend.Controllers
     {
         private readonly DatabaseContext _context;
 
-        private readonly PasswordHasher<User> thing = new PasswordHasher<User>();
+        private readonly PasswordHasher<User> passwordHasher = new PasswordHasher<User>();
 
         public UserAccountsController(DatabaseContext context)
         {
@@ -45,6 +45,36 @@ namespace BDB_Backend.Controllers
             }
 
             return userAccount;
+        }
+
+        // GET: api/UserAccounts/LoginUser
+        [HttpGet("LoginUser/{userName}/{password}")]
+        public async Task<ActionResult<User>> LoginUserAccount(string userName, string password)
+        {
+            var userAccount = await _context.Users.Where<User>(thing => (thing.UserName == userName)).ToListAsync();
+
+            bool ready = false;
+
+            if (userAccount.Count > 0)
+            {
+                foreach (var user in userAccount)
+                {
+                    PasswordVerificationResult result = passwordHasher.VerifyHashedPassword(user, user.Password, password);
+                    if ( user.UserName != "" && user.UserName != null && user.Password != "" && user.Password != null && result == PasswordVerificationResult.Success )
+                    {
+                        ready = true;
+                    }
+                }
+            }
+
+            if (ready)
+            {
+                return Ok();
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         // PUT: api/UserAccounts/<any user id>
@@ -83,7 +113,7 @@ namespace BDB_Backend.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUserAccount(User userAccount)
         {
-            userAccount.Password = thing.HashPassword(userAccount, userAccount.Password);
+            userAccount.Password = passwordHasher.HashPassword(userAccount, userAccount.Password);
             _context.Users.Add(userAccount);
             await _context.SaveChangesAsync();
 
